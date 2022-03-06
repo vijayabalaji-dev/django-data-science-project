@@ -1,0 +1,222 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{% static 'bootstrap.min.css'%}">
+        <style>
+            table{
+                overflow-y : scroll;
+                display : block;            }
+        </style>
+    </head>
+<body>
+
+   <nav class="bg-light d-flex  align-items-center justify-content-between p-2">
+    <div class="m-1">
+        <h2>Telecom Churn Prediction</h2>
+    </div>
+   <div class="m-1">
+        <h3>Data Science Report</h3>
+    </div>
+   </nav>
+
+
+<div class="container">
+<br><br>
+<div class="row">
+<div class="col-md-12">
+<div class="card card-body">
+
+
+{% if result != 0 %}
+<div class="card card-body">
+<div class="alert alert-dismissible alert-info">
+<h2>{{result}}</h2>
+</div>
+{% endif %}
+
+
+<h3>Data Sample :</h3>
+<table class="table table-striped table-responsive table-body" style="overflow : scroll">
+<tr>
+    <th>customerID</th>
+    <th>gender</th>
+    <th>SeniorCitizen</th>
+    <th>Dependents</th>
+    <th>PhoneService</th>
+    <th>MultipleLines</th>
+    <th>InternetService</th>
+    <th>OnlineSecurity</th>
+    <th>OnlineBackup</th>
+    <th>DeviceProtection</th>
+    <th>TechSupport</th>
+    <th>StreamingTV</th>
+    <th>StreamingMovies</th>
+    <th>PaymentMethod</th>
+    <th>MonthlyCharges</th>
+    <th>TotalCharges</th>
+    <th>Churn</th>
+</tr>
+{% for d in t%}
+<tr>
+    <td >{{d.customerID}}</td>
+    <td >{{d.gender}}</td>
+    <td >{{d.SeniorCitizen}}</td>
+    <td >{{d.Dependents}}</td>
+    <td >{{d.PhoneService}}</td>
+    <td >{{d.MultipleLines}}</td>
+    <td >{{d.InternetService}}</td>
+    <td >{{d.OnlineSecurity}}</td>
+    <td >{{d.OnlineBackup}}</td>
+    <td >{{d.DeviceProtection}}</td>
+    <td >{{d.TechSupport}}</td>
+    <td >{{d.StreamingTV}}</td>
+    <td >{{d.StreamingMovies}}</td>
+    <td >{{d.PaymentMethod}}</td>
+    <td >{{d.MonthlyCharges}}</td>
+    <td >{{d.TotalCharges}}</td>
+    <td >{{d.Churn}}</td>
+</tr>
+{%endfor%}
+<table>
+</div>
+</div>
+</div>
+</div>
+{% comment %} Displaying Data Frame in HTML {% endcomment %}
+<br>
+<h3>Data.Describe()</h3>
+
+<div class='row'>
+<div class="col-md-12">
+{{ des | safe }}
+
+{{ inf | safe }}
+</div>
+</div>
+</div>
+<br><br>
+{% comment %} Displaying charts {% endcomment %}
+<h3>Distribution of Churn</h3>
+<img src="data:image/png;base64, {{grf|safe}}" class="img-responsive">
+<br>
+<div class="alert alert-dismissible alert-primary">
+    <strong><p>It clearly says that our data is highly imbalace.</p></strong>
+</div>
+<br>
+<br>
+<h3>Relationship of Phone Service and Total Charges Based on Churn</h3>
+<img src="data:image/png;base64, {{gf|safe}}" class="img-responsive">
+<br>
+<br>
+<h3>Count Plot of Payment Method and Churn</h3>
+<img src="data:image/png;base64, {{payment|safe}}" class="img-responsive">
+<br>
+<br>
+<h3>Distribution of Payment Method Where Churn is Yes</h3>
+<img src="data:image/png;base64, {{churn_yes_payment_method|safe}}" class="img-responsive">
+<div class="alert alert-dismissible alert-primary">
+    <strong><p>It clearly says that People who used Electronic Check left the Company (churned) </p></strong>
+</div>
+<br>
+<br>
+<h3>Distribution of Payment Method Where Churn is NO</h3>
+<img src="data:image/png;base64, {{churn_no_payment_method|safe}}">
+<div class="alert alert-dismissible alert-primary">
+    <strong><p>It clearly says that People who used Mailed Check stayed in the Company (not churned) </p></strong>
+</div>
+
+<div class="card card-body">
+<h5>After Data Clening </h5>
+<h3>Data Selected For Modeling</h3>
+{{data_modeling_html|safe}}
+</div>
+
+<br>
+<br>
+
+<div class="card card-body">
+    <h3>Cross Value Score of Logistic Regression, Decision Tree and Random Forest</h3>
+<ul>
+    <li>Logistic Regression  : {{log_score}}</li>
+    <li>Decesion Tree : {{des_score}}</li>
+    <li>Random Forest : {{ran_score }} </li>
+</ul>
+</div>
+
+<br>
+<br>
+
+<div class="alert alert-dismissible alert-success">
+<h2>Random Forest Shows the Best Result So That Model will Be using it</h2>
+</div>
+
+<br><br>
+
+<div class="card card-body">
+<h3>Various Evaluation Metrices for Random Forest</h3>
+<ul>
+    <li>Accuracy Score : {{accuracy}}</li>
+    <li>Precision Score : {{recall}}</li>
+    <li>Recall Score : {{precision }} </li>
+</ul>
+</div>
+
+<br>
+<br>
+
+<div class="card card-body">
+    <h3>Confusion Matrix</h3>
+    {{confusion | safe}}
+</div>
+
+<br>
+<br>
+
+<div class="card bg-light mb-3">
+  <div class="card-header"><h3>Predict :</h3> </div>
+  <div class="card-body">
+    <div class="row">
+    <form action="." method="Post" class="col-md-8">
+        {% csrf_token %}
+    <div class="form-group">
+      <label  class="form-label mt-4">Enter Tenure : </label>
+      <input class="form-control" type="text" name="tenure" required>
+    </div>
+    <div class="form-group">
+      <label  class="form-label mt-4">Enter Phone Service : </label>
+      <input class="form-control" type="text" name="phoneservice" required>
+    </div>
+    <div class="form-group">
+      <label  class="form-label mt-4">Enter Contract : </label>
+      <input class="form-control" type="text" name="contract" required>
+    </div>
+    <div class="form-group">
+      <label  class="form-label mt-4">Enter Paperless Billing : </label>
+      <input class="form-control" type="text" name="paperlessbilling" required>
+    </div>
+    <div class="form-group">
+      <label  class="form-label mt-4">Enter Payment Method : </label>
+      <input class="form-control" type="text" name="paymentmethod" required>
+    </div>
+    <div class="form-group">
+      <label  class="form-label mt-4">Enter Monthly Charges : </label>
+      <input class="form-control" type="text" name="monthlycharges" required>
+    </div>
+    <input type="submit" name="submit" value="submit" class="m-3 btn btn-primary">
+    </form>
+    </div>
+  </div>
+</div>
+{% if result != 0 %}
+<div class="card card-body">
+<div class="alert alert-dismissible alert-info">
+<h2>{{result}}</h2>
+</div>
+{% endif %}
+</div>
+</div>
+</html>
